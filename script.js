@@ -25,6 +25,9 @@ const dealerCardsEl = document.querySelector("#dealer-cards");
 const playerCardsEl = document.querySelector("#player-cards");
 const dealerTotalEl = document.querySelector("#dealer-total");
 const playerTotalEl = document.querySelector("#player-total");
+const playerChipsEl = document.querySelector("#player-chips");
+const currentBetEl = document.querySelector("#current-bet");
+const chipButtons = document.querySelectorAll(".chip");
 
 const dealButton = document.querySelector("#deal");
 const hitButton = document.querySelector("#hit");
@@ -35,6 +38,8 @@ let deck = [];
 let dealerHand = [];
 let playerHand = [];
 let roundActive = false;
+let playerChips = 5000;
+let currentBet = 0;
 
 function buildDeck() {
   const cards = [];
@@ -105,7 +110,18 @@ function setButtons({ canDeal, canHit, canStand }) {
   standButton.disabled = !canStand;
 }
 
+function updateBankroll() {
+  playerChipsEl.textContent = playerChips.toLocaleString();
+  currentBetEl.textContent = currentBet.toLocaleString();
+  chipButtons.forEach((button) => {
+    const amount = Number(button.dataset.chip);
+    button.disabled = roundActive || playerChips < amount;
+  });
+  dealButton.disabled = roundActive || currentBet === 0;
+}
+
 function startRound() {
+  if (currentBet === 0 || roundActive) return;
   deck = buildDeck();
   shuffle(deck);
   dealerHand = [];
@@ -120,6 +136,7 @@ function startRound() {
   renderHands();
   setStatus("Your move. Hit or stand?");
   setButtons({ canDeal: false, canHit: true, canStand: true });
+  updateBankroll();
 
   checkForBlackjack();
 }
@@ -135,11 +152,11 @@ function checkForBlackjack() {
   const dealerTotal = calculateTotal(dealerHand);
 
   if (playerTotal === 21 && dealerTotal === 21) {
-    finishRound("Push! Both have blackjack.");
+    resolvePush("Push! Both have blackjack.");
   } else if (playerTotal === 21) {
-    finishRound("Blackjack! You win!");
+    resolveWin("Blackjack! You win!");
   } else if (dealerTotal === 21) {
-    finishRound("Dealer has blackjack. You lose.");
+    resolveLoss("Dealer has blackjack. You lose.");
   }
 }
 
@@ -149,7 +166,7 @@ function playerHit() {
   renderHands();
   const playerTotal = calculateTotal(playerHand);
   if (playerTotal > 21) {
-    finishRound("Bust! You went over 21.");
+    resolveLoss("Bust! You went over 21.");
   }
 }
 
@@ -170,27 +187,45 @@ function playerStand() {
   const dealerTotal = calculateTotal(dealerHand);
 
   if (dealerTotal > 21) {
-    finishRound("Dealer busts! You win.");
+    resolveWin("Dealer busts! You win.");
     return;
   }
 
   if (dealerTotal === playerTotal) {
-    finishRound("Push! It's a tie.");
+    resolvePush("Push! It's a tie.");
     return;
   }
 
   if (playerTotal > dealerTotal) {
-    finishRound("You win! Nice hand.");
+    resolveWin("You win! Nice hand.");
     return;
   }
 
-  finishRound("Dealer wins. Try again!");
+  resolveLoss("Dealer wins. Try again!");
+}
+
+function resolveWin(message) {
+  playerChips += currentBet * 2;
+  currentBet = 0;
+  finishRound(message);
+}
+
+function resolvePush(message) {
+  playerChips += currentBet;
+  currentBet = 0;
+  finishRound(message);
+}
+
+function resolveLoss(message) {
+  currentBet = 0;
+  finishRound(message);
 }
 
 function finishRound(message) {
   roundActive = false;
   setStatus(message);
   setButtons({ canDeal: true, canHit: false, canStand: false });
+  updateBankroll();
 }
 
 function resetTable() {
@@ -199,16 +234,29 @@ function resetTable() {
   dealerHand = [];
   playerHand = [];
   roundActive = false;
+  playerChips = 5000;
+  currentBet = 0;
   dealerCardsEl.innerHTML = "";
   playerCardsEl.innerHTML = "";
   updateTotals();
   setStatus("Click Deal to start.");
   setButtons({ canDeal: true, canHit: false, canStand: false });
+  updateBankroll();
 }
 
 dealButton.addEventListener("click", startRound);
 hitButton.addEventListener("click", playerHit);
 standButton.addEventListener("click", playerStand);
 resetButton.addEventListener("click", resetTable);
+chipButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (roundActive) return;
+    const amount = Number(button.dataset.chip);
+    if (playerChips < amount) return;
+    playerChips -= amount;
+    currentBet += amount;
+    updateBankroll();
+  });
+});
 
 resetTable();

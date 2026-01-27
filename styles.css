@@ -155,6 +155,8 @@ h1 {
   align-items: center;
   font-weight: 700;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  transform-origin: bottom center;
+  opacity: 0;
 }
 
 .card span {
@@ -163,6 +165,21 @@ h1 {
 
 .card .suit {
   font-size: 1.4rem;
+}
+
+.card.dealt {
+  animation: deal-card 0.35s ease-out forwards;
+}
+
+@keyframes deal-card {
+  0% {
+    transform: translateY(-12px) scale(0.96);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
 
 .controls {

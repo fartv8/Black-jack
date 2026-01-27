@@ -84,13 +84,15 @@ function calculateTotal(hand) {
 
 function renderHand(hand, container) {
   container.innerHTML = "";
-  hand.forEach((card) => {
+  hand.forEach((card, index) => {
     const cardEl = document.createElement("div");
     cardEl.className = "card";
     cardEl.innerHTML = `
       <span>${card.label}</span>
       <span class="suit" style="color: ${card.color};">${card.suit}</span>
     `;
+    cardEl.style.animationDelay = `${index * 0.08}s`;
+    cardEl.classList.add("dealt");
     container.appendChild(cardEl);
   });
 }

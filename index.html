@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blackjack</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="table">
+      <header class="header">
+        <div>
+          <h1>Blackjack</h1>
+          <p class="subtitle">Beat the dealer without going over 21.</p>
+        </div>
+        <div class="status" id="status">Click Deal to start.</div>
+      </header>
+
+      <section class="hands">
+        <div class="hand">
+          <h2>Dealer <span id="dealer-total" class="total">0</span></h2>
+          <div class="cards" id="dealer-cards"></div>
+        </div>
+        <div class="hand">
+          <h2>You <span id="player-total" class="total">0</span></h2>
+          <div class="cards" id="player-cards"></div>
+        </div>
+      </section>
+
+      <section class="controls">
+        <button id="deal" class="primary">Deal</button>
+        <button id="hit">Hit</button>
+        <button id="stand">Stand</button>
+        <button id="reset">Reset</button>
+      </section>
+
+      <section class="rules">
+        <h3>Quick Rules</h3>
+        <ul>
+          <li>Face cards count as 10. Aces are 1 or 11.</li>
+          <li>Dealer hits until reaching 17 or more.</li>
+          <li>Get closer to 21 than the dealer to win.</li>
+        </ul>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

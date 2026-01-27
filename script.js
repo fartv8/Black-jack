@@ -237,7 +237,8 @@ function resetTable() {
   playerHand = [];
   roundActive = false;
   playerChips = 5000;
-  currentBet = 0;
+  currentBet = 100;
+  playerChips -= currentBet;
   dealerCardsEl.innerHTML = "";
   playerCardsEl.innerHTML = "";
   updateTotals();

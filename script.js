@@ -21,6 +21,8 @@ const ranks = [
 ];
 
 const statusEl = document.querySelector("#status");
+const dealerHandEl = document.querySelector(".hand");
+const playerHandEl = document.querySelectorAll(".hand")[1];
 const dealerCardsEl = document.querySelector("#dealer-cards");
 const playerCardsEl = document.querySelector("#player-cards");
 const dealerTotalEl = document.querySelector("#dealer-total");
@@ -112,6 +114,13 @@ function setButtons({ canDeal, canHit, canStand }) {
   standButton.disabled = !canStand;
 }
 
+function animateHand(handEl) {
+  if (!handEl) return;
+  handEl.classList.remove("animate");
+  void handEl.offsetWidth;
+  handEl.classList.add("animate");
+}
+
 function updateBankroll() {
   playerChipsEl.textContent = playerChips.toLocaleString();
   currentBetEl.textContent = currentBet.toLocaleString();
@@ -135,6 +144,8 @@ function startRound() {
   dealCard(playerHand);
   dealCard(dealerHand);
 
+  animateHand(dealerHandEl);
+  animateHand(playerHandEl);
   renderHands();
   setStatus("Your move. Hit or stand?");
   setButtons({ canDeal: false, canHit: true, canStand: true });
@@ -165,6 +176,7 @@ function checkForBlackjack() {
 function playerHit() {
   if (!roundActive) return;
   dealCard(playerHand);
+  animateHand(playerHandEl);
   renderHands();
   const playerTotal = calculateTotal(playerHand);
   if (playerTotal > 21) {
@@ -176,12 +188,14 @@ function dealerTurn() {
   let dealerTotal = calculateTotal(dealerHand);
   while (dealerTotal < 17) {
     dealCard(dealerHand);
+    animateHand(dealerHandEl);
     dealerTotal = calculateTotal(dealerHand);
   }
 }
 
 function playerStand() {
   if (!roundActive) return;
+  animateHand(dealerHandEl);
   dealerTurn();
   renderHands();
 
@@ -237,7 +251,8 @@ function resetTable() {
   playerHand = [];
   roundActive = false;
   playerChips = 5000;
-  currentBet = 0;
+  currentBet = 100;
+  playerChips -= currentBet;
   dealerCardsEl.innerHTML = "";
   playerCardsEl.innerHTML = "";
   updateTotals();

@@ -10,11 +10,29 @@
     <main class="table">
       <header class="header">
         <div>
+          <p class="terminal">Mojave Casino Terminal</p>
           <h1>Blackjack</h1>
           <p class="subtitle">Beat the dealer without going over 21.</p>
         </div>
         <div class="status" id="status">Click Deal to start.</div>
       </header>
+
+      <section class="bankroll">
+        <div>
+          <p class="label">Player Chips</p>
+          <p class="value" id="player-chips">0</p>
+        </div>
+        <div>
+          <p class="label">Current Bet</p>
+          <p class="value" id="current-bet">0</p>
+        </div>
+        <div class="bet-controls">
+          <button class="chip" data-chip="100">+100</button>
+          <button class="chip" data-chip="500">+500</button>
+          <button class="chip" data-chip="1000">+1000</button>
+          <button class="chip" data-chip="5000">+5000</button>
+        </div>
+      </section>
 
       <section class="hands">
         <div class="hand">

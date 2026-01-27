@@ -1,264 +1,270 @@
-const suits = [
-  { symbol: "♠", color: "#1b1b1b" },
-  { symbol: "♥", color: "#c1121f" },
-  { symbol: "♦", color: "#c1121f" },
-  { symbol: "♣", color: "#1b1b1b" },
-];
-const ranks = [
-  { label: "A", value: 11 },
-  { label: "2", value: 2 },
-  { label: "3", value: 3 },
-  { label: "4", value: 4 },
-  { label: "5", value: 5 },
-  { label: "6", value: 6 },
-  { label: "7", value: 7 },
-  { label: "8", value: 8 },
-  { label: "9", value: 9 },
-  { label: "10", value: 10 },
-  { label: "J", value: 10 },
-  { label: "Q", value: 10 },
-  { label: "K", value: 10 },
-];
-
-const statusEl = document.querySelector("#status");
-const dealerCardsEl = document.querySelector("#dealer-cards");
-const playerCardsEl = document.querySelector("#player-cards");
-const dealerTotalEl = document.querySelector("#dealer-total");
-const playerTotalEl = document.querySelector("#player-total");
-const playerChipsEl = document.querySelector("#player-chips");
-const currentBetEl = document.querySelector("#current-bet");
-const chipButtons = document.querySelectorAll(".chip");
-
-const dealButton = document.querySelector("#deal");
-const hitButton = document.querySelector("#hit");
-const standButton = document.querySelector("#stand");
-const resetButton = document.querySelector("#reset");
-
-let deck = [];
-let dealerHand = [];
-let playerHand = [];
-let roundActive = false;
-let playerChips = 5000;
-let currentBet = 0;
-
-function buildDeck() {
-  const cards = [];
-  suits.forEach((suit) => {
-    ranks.forEach((rank) => {
-      cards.push({
-        suit: suit.symbol,
-        color: suit.color,
-        label: rank.label,
-        value: rank.value,
-      });
-    });
-  });
-  return cards;
+:root {
+  color-scheme: dark;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  background: radial-gradient(circle at top, #1b2a1d, #0a0f0b);
+  color: #d8fcd1;
 }
 
-function shuffle(cards) {
-  for (let i = cards.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [cards[i], cards[j]] = [cards[j], cards[i]];
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background-image: radial-gradient(circle at 20% 20%, rgba(64, 139, 54, 0.15), transparent 45%),
+    radial-gradient(circle at 80% 0%, rgba(108, 180, 78, 0.1), transparent 40%);
+}
+
+.table {
+  background: rgba(8, 16, 10, 0.92);
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  max-width: 960px;
+  width: 100%;
+  padding: 32px;
+  display: grid;
+  gap: 32px;
+  border: 1px solid rgba(94, 156, 84, 0.4);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+h1 {
+  font-size: 2.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.terminal {
+  font-size: 0.85rem;
+  color: #89e07d;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  margin-top: 8px;
+  color: #9ccb93;
+}
+
+.status {
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: #0f2013;
+  border: 1px solid #356b3c;
+  font-weight: 600;
+  box-shadow: inset 0 0 12px rgba(53, 107, 60, 0.35);
+}
+
+.bankroll {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(94, 156, 84, 0.35);
+  background: rgba(10, 18, 12, 0.8);
+}
+
+.label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #93d789;
+}
+
+.value {
+  margin-top: 6px;
+  font-size: 1.6rem;
+  color: #d8fcd1;
+}
+
+.bet-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.chip {
+  background: #2a3f2c;
+  border: 1px solid rgba(147, 215, 137, 0.6);
+  color: #d8fcd1;
+  box-shadow: inset 0 0 0 2px rgba(12, 24, 14, 0.6);
+}
+
+.chip:hover {
+  background: #3a5a3c;
+}
+
+.hands {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.hand {
+  background: rgba(12, 28, 17, 0.9);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid #356b3c;
+  position: relative;
+  overflow: hidden;
+}
+
+.hand h2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.hand::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(98, 181, 94, 0.2), transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hand.animate::after {
+  animation: hand-sweep 0.45s ease-out;
+}
+
+@keyframes hand-sweep {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
   }
 }
 
-function dealCard(hand) {
-  if (deck.length === 0) {
-    deck = buildDeck();
-    shuffle(deck);
+.total {
+  background: #14271a;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 1rem;
+}
+
+.cards {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: #f5f0d8;
+  color: #1b1b1b;
+  width: 70px;
+  height: 100px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  transform-origin: bottom center;
+  opacity: 0;
+}
+
+.card span {
+  font-size: 1.1rem;
+}
+
+.card .suit {
+  font-size: 1.4rem;
+}
+
+.card.dealt {
+  animation: deal-card 0.35s ease-out forwards;
+}
+
+@keyframes deal-card {
+  0% {
+    transform: translateY(-12px) scale(0.96);
+    opacity: 0;
   }
-  const card = deck.pop();
-  hand.push(card);
-}
-
-function calculateTotal(hand) {
-  let total = hand.reduce((sum, card) => sum + card.value, 0);
-  let aces = hand.filter((card) => card.label === "A").length;
-  while (total > 21 && aces > 0) {
-    total -= 10;
-    aces -= 1;
-  }
-  return total;
-}
-
-function renderHand(hand, container) {
-  container.innerHTML = "";
-  hand.forEach((card, index) => {
-    const cardEl = document.createElement("div");
-    cardEl.className = "card";
-    cardEl.innerHTML = `
-      <span>${card.label}</span>
-      <span class="suit" style="color: ${card.color};">${card.suit}</span>
-    `;
-    cardEl.style.animationDelay = `${index * 0.08}s`;
-    cardEl.classList.add("dealt");
-    container.appendChild(cardEl);
-  });
-}
-
-function updateTotals() {
-  dealerTotalEl.textContent = calculateTotal(dealerHand);
-  playerTotalEl.textContent = calculateTotal(playerHand);
-}
-
-function setStatus(message) {
-  statusEl.textContent = message;
-}
-
-function setButtons({ canDeal, canHit, canStand }) {
-  dealButton.disabled = !canDeal;
-  hitButton.disabled = !canHit;
-  standButton.disabled = !canStand;
-}
-
-function updateBankroll() {
-  playerChipsEl.textContent = playerChips.toLocaleString();
-  currentBetEl.textContent = currentBet.toLocaleString();
-  chipButtons.forEach((button) => {
-    const amount = Number(button.dataset.chip);
-    button.disabled = roundActive || playerChips < amount;
-  });
-  dealButton.disabled = roundActive || currentBet === 0;
-}
-
-function startRound() {
-  if (currentBet === 0 || roundActive) return;
-  deck = buildDeck();
-  shuffle(deck);
-  dealerHand = [];
-  playerHand = [];
-  roundActive = true;
-
-  dealCard(playerHand);
-  dealCard(dealerHand);
-  dealCard(playerHand);
-  dealCard(dealerHand);
-
-  renderHands();
-  setStatus("Your move. Hit or stand?");
-  setButtons({ canDeal: false, canHit: true, canStand: true });
-  updateBankroll();
-
-  checkForBlackjack();
-}
-
-function renderHands() {
-  renderHand(dealerHand, dealerCardsEl);
-  renderHand(playerHand, playerCardsEl);
-  updateTotals();
-}
-
-function checkForBlackjack() {
-  const playerTotal = calculateTotal(playerHand);
-  const dealerTotal = calculateTotal(dealerHand);
-
-  if (playerTotal === 21 && dealerTotal === 21) {
-    resolvePush("Push! Both have blackjack.");
-  } else if (playerTotal === 21) {
-    resolveWin("Blackjack! You win!");
-  } else if (dealerTotal === 21) {
-    resolveLoss("Dealer has blackjack. You lose.");
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
   }
 }
 
-function playerHit() {
-  if (!roundActive) return;
-  dealCard(playerHand);
-  renderHands();
-  const playerTotal = calculateTotal(playerHand);
-  if (playerTotal > 21) {
-    resolveLoss("Bust! You went over 21.");
+.controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+button {
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #2f5a35;
+  color: #d8fcd1;
+  transition: transform 0.1s ease, background 0.2s ease;
+}
+
+button.primary {
+  background: #4b8d4c;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  background: #62b55e;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.rules {
+  background: rgba(9, 20, 14, 0.8);
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(98, 181, 94, 0.4);
+}
+
+.rules h3 {
+  margin-bottom: 12px;
+}
+
+.rules ul {
+  list-style: disc;
+  margin-left: 20px;
+  color: #b4d1ae;
+  display: grid;
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 16px;
+  }
+
+  .table {
+    padding: 20px;
   }
 }
-
-function dealerTurn() {
-  let dealerTotal = calculateTotal(dealerHand);
-  while (dealerTotal < 17) {
-    dealCard(dealerHand);
-    dealerTotal = calculateTotal(dealerHand);
-  }
-}
-
-function playerStand() {
-  if (!roundActive) return;
-  dealerTurn();
-  renderHands();
-
-  const playerTotal = calculateTotal(playerHand);
-  const dealerTotal = calculateTotal(dealerHand);
-
-  if (dealerTotal > 21) {
-    resolveWin("Dealer busts! You win.");
-    return;
-  }
-
-  if (dealerTotal === playerTotal) {
-    resolvePush("Push! It's a tie.");
-    return;
-  }
-
-  if (playerTotal > dealerTotal) {
-    resolveWin("You win! Nice hand.");
-    return;
-  }
-
-  resolveLoss("Dealer wins. Try again!");
-}
-
-function resolveWin(message) {
-  playerChips += currentBet * 2;
-  currentBet = 0;
-  finishRound(message);
-}
-
-function resolvePush(message) {
-  playerChips += currentBet;
-  currentBet = 0;
-  finishRound(message);
-}
-
-function resolveLoss(message) {
-  currentBet = 0;
-  finishRound(message);
-}
-
-function finishRound(message) {
-  roundActive = false;
-  setStatus(message);
-  setButtons({ canDeal: true, canHit: false, canStand: false });
-  updateBankroll();
-}
-
-function resetTable() {
-  deck = buildDeck();
-  shuffle(deck);
-  dealerHand = [];
-  playerHand = [];
-  roundActive = false;
-  playerChips = 5000;
-  currentBet = 0;
-  dealerCardsEl.innerHTML = "";
-  playerCardsEl.innerHTML = "";
-  updateTotals();
-  setStatus("Click Deal to start.");
-  setButtons({ canDeal: true, canHit: false, canStand: false });
-  updateBankroll();
-}
-
-dealButton.addEventListener("click", startRound);
-hitButton.addEventListener("click", playerHit);
-standButton.addEventListener("click", playerStand);
-resetButton.addEventListener("click", resetTable);
-chipButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    if (roundActive) return;
-    const amount = Number(button.dataset.chip);
-    if (playerChips < amount) return;
-    playerChips -= amount;
-    currentBet += amount;
-    updateBankroll();
-  });
-});
-
-resetTable();

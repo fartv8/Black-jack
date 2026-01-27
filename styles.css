@@ -1,8 +1,8 @@
 :root {
   color-scheme: dark;
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-  background: radial-gradient(circle at top, #145a32, #0b2e1c);
-  color: #f3f7f2;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  background: radial-gradient(circle at top, #1b2a1d, #0a0f0b);
+  color: #d8fcd1;
 }
 
 * {
@@ -17,17 +17,20 @@ body {
   align-items: center;
   justify-content: center;
   padding: 32px;
+  background-image: radial-gradient(circle at 20% 20%, rgba(64, 139, 54, 0.15), transparent 45%),
+    radial-gradient(circle at 80% 0%, rgba(108, 180, 78, 0.1), transparent 40%);
 }
 
 .table {
-  background: rgba(8, 28, 17, 0.9);
-  border-radius: 24px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  background: rgba(8, 16, 10, 0.92);
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   max-width: 960px;
   width: 100%;
   padding: 32px;
   display: grid;
   gap: 32px;
+  border: 1px solid rgba(94, 156, 84, 0.4);
 }
 
 .header {
@@ -39,20 +42,72 @@ body {
 }
 
 h1 {
-  font-size: 2.5rem;
+  font-size: 2.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.terminal {
+  font-size: 0.85rem;
+  color: #89e07d;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  margin-bottom: 8px;
 }
 
 .subtitle {
   margin-top: 8px;
-  color: #b8c8be;
+  color: #9ccb93;
 }
 
 .status {
   padding: 12px 18px;
   border-radius: 999px;
-  background: #12351f;
-  border: 1px solid #2d6a4f;
+  background: #0f2013;
+  border: 1px solid #356b3c;
   font-weight: 600;
+  box-shadow: inset 0 0 12px rgba(53, 107, 60, 0.35);
+}
+
+.bankroll {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(94, 156, 84, 0.35);
+  background: rgba(10, 18, 12, 0.8);
+}
+
+.label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #93d789;
+}
+
+.value {
+  margin-top: 6px;
+  font-size: 1.6rem;
+  color: #d8fcd1;
+}
+
+.bet-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.chip {
+  background: #2a3f2c;
+  border: 1px solid rgba(147, 215, 137, 0.6);
+  color: #d8fcd1;
+  box-shadow: inset 0 0 0 2px rgba(12, 24, 14, 0.6);
+}
+
+.chip:hover {
+  background: #3a5a3c;
 }
 
 .hands {
@@ -62,10 +117,10 @@ h1 {
 }
 
 .hand {
-  background: rgba(16, 42, 28, 0.9);
+  background: rgba(12, 28, 17, 0.9);
   padding: 20px;
   border-radius: 16px;
-  border: 1px solid #2d6a4f;
+  border: 1px solid #356b3c;
 }
 
 .hand h2 {
@@ -76,7 +131,7 @@ h1 {
 }
 
 .total {
-  background: #1b4332;
+  background: #14271a;
   padding: 4px 12px;
   border-radius: 999px;
   font-size: 1rem;
@@ -89,7 +144,7 @@ h1 {
 }
 
 .card {
-  background: #f8f9fa;
+  background: #f5f0d8;
   color: #1b1b1b;
   width: 70px;
   height: 100px;
@@ -99,7 +154,7 @@ h1 {
   justify-content: center;
   align-items: center;
   font-weight: 700;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
 }
 
 .card span {
@@ -122,18 +177,18 @@ button {
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
-  background: #2d6a4f;
-  color: #f3f7f2;
+  background: #2f5a35;
+  color: #d8fcd1;
   transition: transform 0.1s ease, background 0.2s ease;
 }
 
 button.primary {
-  background: #40916c;
+  background: #4b8d4c;
 }
 
 button:hover {
   transform: translateY(-1px);
-  background: #52b788;
+  background: #62b55e;
 }
 
 button:disabled {
@@ -146,7 +201,7 @@ button:disabled {
   background: rgba(9, 20, 14, 0.8);
   padding: 18px;
   border-radius: 12px;
-  border: 1px solid rgba(82, 183, 136, 0.4);
+  border: 1px solid rgba(98, 181, 94, 0.4);
 }
 
 .rules h3 {
@@ -156,7 +211,7 @@ button:disabled {
 .rules ul {
   list-style: disc;
   margin-left: 20px;
-  color: #c7d7cd;
+  color: #b4d1ae;
   display: grid;
   gap: 8px;
 }

@@ -121,6 +121,8 @@ h1 {
   padding: 20px;
   border-radius: 16px;
   border: 1px solid #356b3c;
+  position: relative;
+  overflow: hidden;
 }
 
 .hand h2 {
@@ -128,6 +130,30 @@ h1 {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
+}
+
+.hand::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(98, 181, 94, 0.2), transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hand.animate::after {
+  animation: hand-sweep 0.45s ease-out;
+}
+
+@keyframes hand-sweep {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }
 
 .total {

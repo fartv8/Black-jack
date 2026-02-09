@@ -37,10 +37,12 @@
       <section class="hands">
         <div class="hand">
           <h2>Dealer <span id="dealer-total" class="total">0</span></h2>
+          <div class="hand-figure dealer" aria-hidden="true"></div>
           <div class="cards" id="dealer-cards"></div>
         </div>
         <div class="hand">
           <h2>You <span id="player-total" class="total">0</span></h2>
+          <div class="hand-figure player" aria-hidden="true"></div>
           <div class="cards" id="player-cards"></div>
         </div>
       </section>
@@ -59,6 +61,66 @@
           <li>Dealer hits until reaching 17 or more.</li>
           <li>Get closer to 21 than the dealer to win.</li>
         </ul>
+      </section>
+
+      <section class="games">
+        <div class="game-panel">
+          <h3>Slots</h3>
+          <p class="game-text">Spin three reels. Match all three to win big.</p>
+          <div class="game-row">
+            <label for="slots-bet">Bet</label>
+            <input id="slots-bet" type="number" min="100" step="100" value="100" />
+            <button id="slots-spin">Spin</button>
+          </div>
+          <p class="slot-reels" id="slots-reels" aria-live="polite">- - -</p>
+          <p class="game-status" id="slots-status">Place a bet and spin.</p>
+        </div>
+
+        <div class="game-panel">
+          <h3>Craps</h3>
+          <p class="game-text">Roll two dice. Win on 7/11, lose on 2/3/12, or make your point.</p>
+          <div class="game-row">
+            <label for="craps-bet">Bet</label>
+            <input id="craps-bet" type="number" min="100" step="100" value="100" />
+            <button id="craps-roll">Roll</button>
+          </div>
+          <p class="game-status" id="craps-status">Place a bet and roll.</p>
+        </div>
+
+        <div class="game-panel">
+          <h3>Roulette</h3>
+          <p class="game-text">Bet red/black or a number. Payout: 1:1 (color) or 35:1 (number).</p>
+          <div class="game-row">
+            <label for="roulette-bet">Bet</label>
+            <input id="roulette-bet" type="number" min="100" step="100" value="100" />
+          </div>
+          <div class="game-row">
+            <label for="roulette-choice">Bet Type</label>
+            <select id="roulette-choice">
+              <option value="red">Red</option>
+              <option value="black">Black</option>
+              <option value="number">Number</option>
+            </select>
+            <input id="roulette-number" type="number" min="0" max="36" value="7" />
+            <button id="roulette-spin">Spin</button>
+          </div>
+          <p class="game-status" id="roulette-status">Place a bet and spin.</p>
+        </div>
+
+        <div class="game-panel admin">
+          <h3>Admin Panel</h3>
+          <p class="game-text">Authorized staff only.</p>
+          <div class="game-row">
+            <label for="admin-password">Password</label>
+            <input id="admin-password" type="password" placeholder="Enter passcode" />
+          </div>
+          <div class="game-row">
+            <label for="admin-chips">Set Chips</label>
+            <input id="admin-chips" type="number" min="0" step="100" value="5000" />
+            <button id="admin-apply">Apply</button>
+          </div>
+          <p class="game-status" id="admin-status">Awaiting credentials.</p>
+        </div>
       </section>
     </main>
 

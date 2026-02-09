@@ -30,6 +30,22 @@ const playerTotalEl = document.querySelector("#player-total");
 const playerChipsEl = document.querySelector("#player-chips");
 const currentBetEl = document.querySelector("#current-bet");
 const chipButtons = document.querySelectorAll(".chip");
+const slotsBetInput = document.querySelector("#slots-bet");
+const slotsSpinButton = document.querySelector("#slots-spin");
+const slotsReelsEl = document.querySelector("#slots-reels");
+const slotsStatusEl = document.querySelector("#slots-status");
+const crapsBetInput = document.querySelector("#craps-bet");
+const crapsRollButton = document.querySelector("#craps-roll");
+const crapsStatusEl = document.querySelector("#craps-status");
+const rouletteBetInput = document.querySelector("#roulette-bet");
+const rouletteChoiceSelect = document.querySelector("#roulette-choice");
+const rouletteNumberInput = document.querySelector("#roulette-number");
+const rouletteSpinButton = document.querySelector("#roulette-spin");
+const rouletteStatusEl = document.querySelector("#roulette-status");
+const adminPasswordInput = document.querySelector("#admin-password");
+const adminChipsInput = document.querySelector("#admin-chips");
+const adminApplyButton = document.querySelector("#admin-apply");
+const adminStatusEl = document.querySelector("#admin-status");
 
 const dealButton = document.querySelector("#deal");
 const hitButton = document.querySelector("#hit");
@@ -42,6 +58,14 @@ let playerHand = [];
 let roundActive = false;
 let playerChips = 5000;
 let currentBet = 0;
+let crapsPoint = null;
+const slotSymbols = ["★", "☢", "7", "♞", "♣", "♦"];
+
+const adminPassword = "976532";
+const rouletteRedNumbers = new Set([
+  1, 3, 5, 7, 9, 12, 14, 16, 18,
+  19, 21, 23, 25, 27, 30, 32, 34, 36,
+]);
 
 function buildDeck() {
   const cards = [];
@@ -129,6 +153,32 @@ function updateBankroll() {
     button.disabled = roundActive || playerChips < amount;
   });
   dealButton.disabled = roundActive || currentBet === 0;
+}
+
+function clampBet(value) {
+  const parsed = Number(value);
+  if (Number.isNaN(parsed) || parsed <= 0) return 0;
+  return Math.floor(parsed);
+}
+
+function canAffordBet(amount) {
+  return amount > 0 && playerChips >= amount;
+}
+
+function updateCrapsStatus(message) {
+  crapsStatusEl.textContent = message;
+}
+
+function updateSlotsStatus(message) {
+  slotsStatusEl.textContent = message;
+}
+
+function updateRouletteStatus(message) {
+  rouletteStatusEl.textContent = message;
+}
+
+function updateAdminStatus(message) {
+  adminStatusEl.textContent = message;
 }
 
 function startRound() {
@@ -253,6 +303,12 @@ function resetTable() {
   playerChips = 5000;
   currentBet = 100;
   playerChips -= currentBet;
+  crapsPoint = null;
+  slotsReelsEl.textContent = "- - -";
+  updateSlotsStatus("Place a bet and spin.");
+  updateCrapsStatus("Place a bet and roll.");
+  updateRouletteStatus("Place a bet and spin.");
+  updateAdminStatus("Awaiting credentials.");
   dealerCardsEl.innerHTML = "";
   playerCardsEl.innerHTML = "";
   updateTotals();
@@ -276,4 +332,134 @@ chipButtons.forEach((button) => {
   });
 });
 
+slotsSpinButton.addEventListener("click", () => {
+  const bet = clampBet(slotsBetInput.value);
+  if (!canAffordBet(bet)) {
+    updateSlotsStatus("Not enough chips for that bet.");
+    return;
+  }
+
+  playerChips -= bet;
+  updateBankroll();
+
+  const reels = Array.from({ length: 3 }, () => slotSymbols[Math.floor(Math.random() * slotSymbols.length)]);
+  slotsReelsEl.textContent = reels.join(" ");
+
+  let payout = 0;
+  if (reels[0] === reels[1] && reels[1] === reels[2]) {
+    payout = bet * 8;
+    updateSlotsStatus("Jackpot! Triple match.");
+  } else if (reels[0] === reels[1] || reels[1] === reels[2] || reels[0] === reels[2]) {
+    payout = bet * 2;
+    updateSlotsStatus("Two of a kind! You win.");
+  } else {
+    updateSlotsStatus("No match. Try again.");
+  }
+
+  if (payout > 0) {
+    playerChips += payout;
+  }
+
+  updateBankroll();
+});
+
+crapsRollButton.addEventListener("click", () => {
+  const bet = clampBet(crapsBetInput.value);
+  if (!canAffordBet(bet)) {
+    updateCrapsStatus("Not enough chips for that bet.");
+    return;
+  }
+
+  playerChips -= bet;
+  updateBankroll();
+
+  const dieOne = Math.ceil(Math.random() * 6);
+  const dieTwo = Math.ceil(Math.random() * 6);
+  const roll = dieOne + dieTwo;
+
+  if (crapsPoint === null) {
+    if (roll === 7 || roll === 11) {
+      playerChips += bet * 2;
+      updateCrapsStatus(`Rolled ${roll} ( ${dieOne} + ${dieTwo} ). Natural! You win.`);
+    } else if (roll === 2 || roll === 3 || roll === 12) {
+      updateCrapsStatus(`Rolled ${roll} ( ${dieOne} + ${dieTwo} ). Craps! You lose.`);
+    } else {
+      crapsPoint = roll;
+      updateCrapsStatus(`Rolled ${roll}. Point is set to ${crapsPoint}. Roll again.`);
+    }
+  } else if (roll === crapsPoint) {
+    playerChips += bet * 2;
+    updateCrapsStatus(`Rolled ${roll}. You made your point! You win.`);
+    crapsPoint = null;
+  } else if (roll === 7) {
+    updateCrapsStatus(`Rolled 7. Seven out! You lose.`);
+    crapsPoint = null;
+  } else {
+    updateCrapsStatus(`Rolled ${roll}. Point is ${crapsPoint}. Keep rolling.`);
+  }
+
+  updateBankroll();
+});
+
+rouletteSpinButton.addEventListener("click", () => {
+  const bet = clampBet(rouletteBetInput.value);
+  if (!canAffordBet(bet)) {
+    updateRouletteStatus("Not enough chips for that bet.");
+    return;
+  }
+
+  const choice = rouletteChoiceSelect.value;
+  const chosenNumber = clampBet(rouletteNumberInput.value);
+  if (choice === "number" && (chosenNumber < 0 || chosenNumber > 36)) {
+    updateRouletteStatus("Choose a number from 0 to 36.");
+    return;
+  }
+
+  playerChips -= bet;
+  updateBankroll();
+
+  const spin = Math.floor(Math.random() * 37);
+  const color = spin === 0 ? "green" : rouletteRedNumbers.has(spin) ? "red" : "black";
+  let payout = 0;
+  let resultMessage = `Spin: ${spin} (${color}). `;
+
+  if (choice === "number" && spin === chosenNumber) {
+    payout = bet * 36;
+    resultMessage += "Straight hit! You win.";
+  } else if (choice === color && color !== "green") {
+    payout = bet * 2;
+    resultMessage += "Color match! You win.";
+  } else {
+    resultMessage += "No match. You lose.";
+  }
+
+  if (payout > 0) {
+    playerChips += payout;
+  }
+
+  updateRouletteStatus(resultMessage);
+  updateBankroll();
+});
+
+adminApplyButton.addEventListener("click", () => {
+  const password = adminPasswordInput.value.trim();
+  if (password !== adminPassword) {
+    updateAdminStatus("Access denied. Incorrect password.");
+    adminPasswordInput.value = "";
+    return;
+  }
+
+  const chips = clampBet(adminChipsInput.value);
+  if (chips < 0) {
+    updateAdminStatus("Enter a valid chip amount.");
+    return;
+  }
+
+  playerChips = chips;
+  updateBankroll();
+  updateAdminStatus(`Chip balance set to ${playerChips.toLocaleString()}.`);
+  adminPasswordInput.value = "";
+});
+
 resetTable();
+

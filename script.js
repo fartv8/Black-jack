@@ -42,6 +42,7 @@ const rouletteChoiceSelect = document.querySelector("#roulette-choice");
 const rouletteNumberInput = document.querySelector("#roulette-number");
 const rouletteSpinButton = document.querySelector("#roulette-spin");
 const rouletteStatusEl = document.querySelector("#roulette-status");
+const rouletteWheelEl = document.querySelector("#roulette-wheel");
 const adminPasswordInput = document.querySelector("#admin-password");
 const adminChipsInput = document.querySelector("#admin-chips");
 const adminApplyButton = document.querySelector("#admin-apply");
@@ -422,6 +423,13 @@ rouletteSpinButton.addEventListener("click", () => {
   const color = spin === 0 ? "green" : rouletteRedNumbers.has(spin) ? "red" : "black";
   let payout = 0;
   let resultMessage = `Spin: ${spin} (${color}). `;
+  if (rouletteWheelEl) {
+    rouletteWheelEl.classList.remove("spin");
+    void rouletteWheelEl.offsetWidth;
+    rouletteWheelEl.style.transform = `rotate(${360 * 4 + spin * 10}deg)`;
+    rouletteWheelEl.classList.add("spin");
+    setTimeout(() => rouletteWheelEl.classList.remove("spin"), 1200);
+  }
 
   if (choice === "number" && spin === chosenNumber) {
     payout = bet * 36;

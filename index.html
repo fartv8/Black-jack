@@ -3,131 +3,89 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Blackjack</title>
+    <meta name="theme-color" content="#f4f2ed" />
+    <title>KeebLab — Mechanical Keyboard Switch Tester</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="table">
-      <header class="header">
-        <div>
-          <p class="terminal">Mojave Casino Terminal</p>
-          <h1>Blackjack</h1>
-          <p class="subtitle">Beat the dealer without going over 21.</p>
-        </div>
-        <div class="status" id="status">Click Deal to start.</div>
-      </header>
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="KeebLab home"><span class="brand-mark">K</span><span>Keeb<span>Lab</span></span></a>
+      <nav aria-label="Main navigation">
+        <a class="active" href="#tester">Switch Tester</a>
+        <a href="#library">Switch Library</a>
+        <a href="#guide">Learn</a>
+      </nav>
+      <button class="icon-button" id="sound-toggle" aria-label="Mute switch sounds" aria-pressed="false">
+        <span class="sound-icon">◖))</span>
+      </button>
+    </header>
 
-      <section class="bankroll">
-        <div>
-          <p class="label">Player Chips</p>
-          <p class="value" id="player-chips">0</p>
-        </div>
-        <div>
-          <p class="label">Current Bet</p>
-          <p class="value" id="current-bet">0</p>
-        </div>
-        <div class="bet-controls">
-          <button class="chip" data-chip="100">+100</button>
-          <button class="chip" data-chip="500">+500</button>
-          <button class="chip" data-chip="1000">+1000</button>
-          <button class="chip" data-chip="5000">+5000</button>
+    <main>
+      <section class="hero" id="tester">
+        <div class="eyebrow"><span></span> Interactive sound studio</div>
+        <h1>Find your perfect<br /><em>switch sound.</em></h1>
+        <p>Tap the keyboard, compare switch profiles, and discover the sound and feel that belongs on your desk.</p>
+        <div class="hero-actions">
+          <a href="#keyboard" class="primary-button">Start typing <span>↓</span></a>
+          <a href="#library" class="text-link">Browse all switches <span>→</span></a>
         </div>
       </section>
 
-      <section class="hands">
-        <div class="hand">
-          <h2>Dealer <span id="dealer-total" class="total">0</span></h2>
-          <div class="hand-figure dealer" aria-hidden="true"></div>
-          <div class="cards" id="dealer-cards"></div>
+      <section class="studio" id="keyboard">
+        <div class="studio-toolbar">
+          <div>
+            <span class="section-number">01</span>
+            <h2>Sound tester</h2>
+          </div>
+          <div class="selected-switch">
+            <span class="switch-swatch" id="selected-swatch"></span>
+            <div><small>Currently testing</small><strong id="selected-name">Gateron Oil King</strong></div>
+            <button id="next-switch" aria-label="Select next switch">⌄</button>
+          </div>
         </div>
-        <div class="hand">
-          <h2>You <span id="player-total" class="total">0</span></h2>
-          <div class="hand-figure player" aria-hidden="true"></div>
-          <div class="cards" id="player-cards"></div>
+
+        <div class="keyboard-shell" tabindex="0" aria-label="Interactive keyboard. Type on your physical keyboard or click a key.">
+          <div class="keyboard-hint"><span class="pulse"></span> Your keyboard is live — start typing</div>
+          <div class="keyboard" id="virtual-keyboard"></div>
+          <div class="keyboard-footer">
+            <span>ESC</span><span>KeebLab / 75</span><span>USB-C</span>
+          </div>
+        </div>
+        <div class="sound-controls">
+          <label>Volume <input id="volume" type="range" min="0" max="100" value="72" /></label>
+          <label>Case profile
+            <select id="case-profile"><option value="aluminum">Aluminum</option><option value="plastic">Plastic</option><option value="wood">Wood</option></select>
+          </label>
+          <label class="toggle-label">Room tone <input id="room-tone" type="checkbox" checked /><span class="toggle"></span></label>
         </div>
       </section>
 
-      <section class="controls">
-        <button id="deal" class="primary">Deal</button>
-        <button id="hit">Hit</button>
-        <button id="stand">Stand</button>
-        <button id="reset">Reset</button>
+      <section class="library" id="library">
+        <div class="section-heading">
+          <div><span class="section-number">02</span><h2>Switch library</h2></div>
+          <p>A growing collection of iconic switches, recreated as interactive sound profiles.</p>
+        </div>
+        <div class="filters" role="group" aria-label="Filter switches">
+          <button class="filter active" data-filter="all">All switches <span>12</span></button>
+          <button class="filter" data-filter="linear">Linear <span>5</span></button>
+          <button class="filter" data-filter="tactile">Tactile <span>4</span></button>
+          <button class="filter" data-filter="clicky">Clicky <span>3</span></button>
+        </div>
+        <div class="switch-grid" id="switch-grid"></div>
       </section>
 
-      <section class="rules">
-        <h3>Quick Rules</h3>
-        <ul>
-          <li>Face cards count as 10. Aces are 1 or 11.</li>
-          <li>Dealer hits until reaching 17 or more.</li>
-          <li>Get closer to 21 than the dealer to win.</li>
-        </ul>
-      </section>
-
-      <section class="games">
-        <div class="game-panel">
-          <h3>Slots</h3>
-          <p class="game-text">Spin three reels. Match all three to win big.</p>
-          <div class="game-row">
-            <label for="slots-bet">Bet</label>
-            <input id="slots-bet" type="number" min="100" step="100" value="100" />
-            <button id="slots-spin">Spin</button>
-          </div>
-          <p class="slot-reels" id="slots-reels" aria-live="polite">- - -</p>
-          <p class="game-status" id="slots-status">Place a bet and spin.</p>
-        </div>
-
-        <div class="game-panel">
-          <h3>Craps</h3>
-          <p class="game-text">Roll two dice. Win on 7/11, lose on 2/3/12, or make your point.</p>
-          <div class="game-row">
-            <label for="craps-bet">Bet</label>
-            <input id="craps-bet" type="number" min="100" step="100" value="100" />
-            <button id="craps-roll">Roll</button>
-          </div>
-          <p class="game-status" id="craps-status">Place a bet and roll.</p>
-        </div>
-
-        <div class="game-panel">
-          <h3>Roulette</h3>
-          <p class="game-text">Bet red/black or a number. Payout: 1:1 (color) or 35:1 (number).</p>
-          <div class="roulette-wheel" id="roulette-wheel" aria-hidden="true">
-            <div class="roulette-pointer"></div>
-            <div class="roulette-ring"></div>
-          </div>
-          <div class="game-row">
-            <label for="roulette-bet">Bet</label>
-            <input id="roulette-bet" type="number" min="100" step="100" value="100" />
-          </div>
-          <div class="game-row">
-            <label for="roulette-choice">Bet Type</label>
-            <select id="roulette-choice">
-              <option value="red">Red</option>
-              <option value="black">Black</option>
-              <option value="number">Number</option>
-            </select>
-            <input id="roulette-number" type="number" min="0" max="36" value="7" />
-            <button id="roulette-spin">Spin</button>
-          </div>
-          <p class="game-status" id="roulette-status">Place a bet and spin.</p>
-        </div>
-
-        <div class="game-panel admin">
-          <h3>Admin Panel</h3>
-          <p class="game-text">Authorized staff only.</p>
-          <div class="game-row">
-            <label for="admin-password">Password</label>
-            <input id="admin-password" type="password" placeholder="Enter passcode" />
-          </div>
-          <div class="game-row">
-            <label for="admin-chips">Set Chips</label>
-            <input id="admin-chips" type="number" min="0" step="100" value="5000" />
-            <button id="admin-apply">Apply</button>
-          </div>
-          <p class="game-status" id="admin-status">Awaiting credentials.</p>
-        </div>
+      <section class="guide" id="guide">
+        <span class="section-number">03</span>
+        <div><h2>Not sure where to start?</h2><p><strong>Linear</strong> switches are smooth, <strong>tactile</strong> switches have a satisfying bump, and <strong>clicky</strong> switches add a crisp audible snap.</p></div>
+        <a href="#library">Explore the guide <span>↗</span></a>
       </section>
     </main>
 
+    <footer><div class="brand"><span class="brand-mark">K</span><span>KeebLab</span></div><p>Made for people who care how every keystroke feels.</p><span>© 2026 KeebLab</span></footer>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="script.js"></script>
   </body>
 </html>
